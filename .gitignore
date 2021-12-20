@@ -1,3 +1,4 @@
 # Project exclude paths
 /target/!/src/main/resources/masterKey.txt
 /src/main/java/de/leon/f1twitterbot/MasterKey.java
+/target/
