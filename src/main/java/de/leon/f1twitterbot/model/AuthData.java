@@ -35,4 +35,11 @@ public class AuthData {
         }
     }
 
+    public AuthData(@NonNull String consumerKey, @NonNull String consumerSecret,
+        @NonNull String accessToken, @NonNull String accessTokenSecret) {
+        ConsumerKey = consumerKey;
+        ConsumerSecret = consumerSecret;
+        AccessToken = accessToken;
+        AccessTokenSecret = accessTokenSecret;
+    }
 }
