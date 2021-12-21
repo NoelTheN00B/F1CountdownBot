@@ -10,8 +10,7 @@ module de.leon.f1twitterbot {
     requires eu.hansolo.tilesfx;
 
     requires org.twitter4j.core;
-    requires lombok;
-    requires tink;
+    requires static lombok;
 
     opens de.leon.f1twitterbot to javafx.fxml;
     exports de.leon.f1twitterbot;

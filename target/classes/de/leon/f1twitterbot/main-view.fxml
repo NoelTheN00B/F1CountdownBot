@@ -12,8 +12,13 @@
     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
   </padding>
 
-  <Label fx:id="welcomeText"/>
-  <Button text="Set Config" onAction="#onHelloButtonClick"/>
+  <Button text="Set Config" onAction="#setConfigButtonClick"/>
   <Label fx:id="apiKeyLabel" text="API Key"/>
   <TextField fx:id="apiKeyTextfield"/>
+  <Label fx:id="apiSecretKeyLabel" text="API Key"/>
+  <TextField fx:id="apiSecretKeyTextfield"/>
+  <Label fx:id="accessTokenLabel" text="API Key"/>
+  <TextField fx:id="accessTokenTextfield"/>
+  <Label fx:id="accessTokenSecretLabel" text="API Key"/>
+  <TextField fx:id="accessTokenSecretTextfield"/>
 </VBox>
