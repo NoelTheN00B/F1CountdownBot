@@ -1,21 +1,18 @@
 package de.leon.f1twitterbot.config;
 
 import de.leon.f1twitterbot.model.AuthData;
-import twitter4j.TwitterFactory;
-import twitter4j.conf.ConfigurationBuilder;
+import io.github.redouane59.twitter.TwitterClient;
+import io.github.redouane59.twitter.signature.TwitterCredentials;
 
 public class Setup {
 
-    public static TwitterFactory setupConfig(AuthData authData) {
+    public static TwitterClient setupConfig(AuthData authData) {
 
-        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-        configurationBuilder.setDebugEnabled(true)
-            .setOAuthConsumerKey(authData.getConsumerKey())
-            .setOAuthConsumerSecret(authData.getAccessTokenSecret())
-            .setOAuthAccessToken(authData.getConsumerKey())
-            .setOAuthAccessTokenSecret(authData.getAccessTokenSecret());
-
-        return new TwitterFactory(configurationBuilder.build());
+        return new TwitterClient(TwitterCredentials.builder()
+            .accessToken(authData.getAccessToken())
+            .accessTokenSecret(authData.getAccessTokenSecret())
+            .apiKey(authData.getConsumerKey())
+            .apiSecretKey(authData.getConsumerSecret()).build());
     }
 
 }

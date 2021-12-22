@@ -14,8 +14,17 @@ public class RaceInfo {
     private String circuitName;
     private LocalDateTime raceDateTime;
 
+    public RaceInfo(Integer raceNo, String country, String city, String circuitName,
+        LocalDateTime raceDateTime) {
+        this.raceNo = raceNo;
+        this.country = country;
+        this.city = city;
+        this.circuitName = circuitName;
+        this.raceDateTime = raceDateTime;
+    }
+
     /**
-     * Parses line from text file with structur "raceNo//country//city//circuitName//year//month//day//startHour//startMinute"
+     * Parses line from text file with structure "raceNo//country//city//circuitName//year//month//day//startHour//startMinute"
      *
      * @param line
      */
