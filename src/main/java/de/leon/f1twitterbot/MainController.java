@@ -3,35 +3,23 @@ package de.leon.f1twitterbot;
 import de.leon.f1twitterbot.config.ConfiguredTwitter;
 import de.leon.f1twitterbot.config.Texts;
 import de.leon.f1twitterbot.jobs.TestJob;
-import de.leon.f1twitterbot.jobs.TestTask;
 import de.leon.f1twitterbot.jobs.TweetJob;
-import de.leon.f1twitterbot.jobs.TweetTask;
+import de.leon.f1twitterbot.jobs.WeeklyStatusPmJob;
+import de.leon.f1twitterbot.trigger.BotTrigger;
+import de.leon.f1twitterbot.trigger.BotTrigger.CronTriggerWeekdayCode;
 import io.github.redouane59.twitter.TwitterClient;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
 import java.util.Timer;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
-import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
-import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
 
 public class MainController {
@@ -56,71 +44,53 @@ public class MainController {
 
         twitterClient = ConfiguredTwitter.get();
 
-        /*
         SchedulerFactory schedulerFactory = new StdSchedulerFactory();
         scheduler = schedulerFactory.getScheduler();
 
-        JobDetail tweetJobDetail = JobBuilder.newJob(TweetJob.class)
-            .withIdentity("tweetJob", "tweets")
+        JobDetail countdownTweets = JobBuilder.newJob(TweetJob.class)
+            .withIdentity("countdownTweet", "tweets")
+            .build();
+
+        JobDetail weeklyStatusPM = JobBuilder.newJob(WeeklyStatusPmJob.class)
+            .withIdentity("weeklyStatusPM", "pms")
             .build();
 
         JobDetail testJobDetail = JobBuilder.newJob(TestJob.class)
             .withIdentity("testJob", "testJobs")
             .build();
 
-        Trigger dailyTrigger = TriggerBuilder.newTrigger()
-            .withIdentity("dailyTrigger", "trigger")
-            .startAt(Date.from(
-                LocalDate.now().plusDays(1).atStartOfDay().atZone(ZoneId.systemDefault())
-                    .toInstant()))
-            .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                .withIntervalInHours(24)
-                .withMisfireHandlingInstructionFireNow()
-                .repeatForever())
-            .forJob("tweetJob", "tweets")
-            .build();
-
-        Trigger testTrigger = TriggerBuilder.newTrigger()
-            .withIdentity("testTrigger", "trigger")
-            .startNow()
-            .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                .withIntervalInSeconds(30)
-                .withMisfireHandlingInstructionFireNow()
-                .repeatForever())
-            //.forJob("testJob", "testJobs")
-            .forJob("tweetJob", "tweets")
-            .build();
-
-        CronTrigger dailyCronTrigger = TriggerBuilder.newTrigger()
-            .withIdentity("dailyCronTrigger", "trigger")
-            .withSchedule(CronScheduleBuilder.cronSchedule("0 0 0 * * ?")
-                .withMisfireHandlingInstructionFireAndProceed())
-            .forJob("tweetJob", "tweets")
-            .build();
-
-        //scheduler.scheduleJob(tweetJobDetail, dailyCronTrigger);
-        //scheduler.scheduleJob(testJobDetail, testTrigger);
-        scheduler.scheduleJob(tweetJobDetail, testTrigger);
-        scheduler.start();
-         */
+        Trigger testTrigger = BotTrigger.getTestTrigger("testTrigger1", "testTrigger", "testJob", "testJobs", 30);
+        Trigger testTrigger2 = BotTrigger.getTestTrigger("testTrigger2", "testTrigger", "weeklyStatusPM", "pms", 60);
+        CronTrigger countdownTweetsTrigger = BotTrigger.getDailyCounterTrigger("countdownTweetsTrigger", "tweetTrigger", "countdownTweet", "tweets");
+        CronTrigger weeklyStatusTrigger = BotTrigger.getWeeklyStatusTrigger("weeklyStatusTrigger", "pmTrigger", "weeklyStatusPM", "pms", CronTriggerWeekdayCode.MON);
 
         assert twitterClient != null;
         twitterClient.postTweet(Texts.onlineMsg());
         statusLabel.setText("Bot running!");
 
-        timer = new Timer();
+        scheduler.scheduleJob(testJobDetail, testTrigger);
+        scheduler.scheduleJob(weeklyStatusPM, testTrigger2);
+        //scheduler.scheduleJob(countdownTweets, countdownTweetsTrigger);
+        //scheduler.scheduleJob(weeklyStatusPM, weeklyStatusTrigger);
+        scheduler.start();
+
+        /*timer = new Timer();
         //timer.schedule(new TestTask(), Date.from(LocalDate.now().plusDays(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), ((1000 * 60) * 60) * 24);
-        timer.schedule(new TestTask(), Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()), 30000);
-        timer.schedule(new TweetTask(twitterClient), Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()), 1000 * 60);
+        timer.schedule(new TestTask(twitterClient), Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()), 60000);*/
 
     }
 
     public void stopButtonClick(ActionEvent actionEvent) throws SchedulerException {
 
         try {
+            scheduler.clear();
+            scheduler.shutdown();
+        } catch (NullPointerException ignore) {
+        }
+
+        try {
             timer.cancel();
             timer.purge();
-            scheduler.shutdown();
         } catch (NullPointerException ignore) {
         }
 

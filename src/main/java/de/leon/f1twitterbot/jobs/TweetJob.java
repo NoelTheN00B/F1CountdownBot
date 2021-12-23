@@ -6,8 +6,12 @@ import de.leon.f1twitterbot.config.ConfiguredTwitter;
 import de.leon.f1twitterbot.config.Texts;
 import de.leon.f1twitterbot.model.RaceInfo;
 import io.github.redouane59.twitter.TwitterClient;
+import io.github.redouane59.twitter.dto.tweet.Tweet;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -35,14 +39,26 @@ public class TweetJob implements Job {
             nextRace = racesThisYear.get(0);
         }
 
-        TwitterClient twitterClient = null;
-
-        twitterClient = ConfiguredTwitter.get();
-
-        twitterClient.postTweet(
+        Tweet lastTweet = ConfiguredTwitter.get().postTweet(
             Texts.daysUntil(
-                (int) DAYS.between(testDate,
-                    nextRace.getRaceDateTime().toLocalDate())));
+                (int) DAYS.between(testDate, nextRace.getRaceDateTime().toLocalDate()),
+                nextRace.getGrandPrixName()));
+
+        try {
+            File tweetsThisWeek = new File("tweetsThisWeek.txt");
+            if (!tweetsThisWeek.exists()) {
+                tweetsThisWeek.createNewFile();
+            }
+
+            BufferedWriter bw = new BufferedWriter(new FileWriter(tweetsThisWeek));
+            bw.write(lastTweet.getId());
+            bw.newLine();
+            bw.flush();
+            bw.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         System.out.println("Bot tweeted!");
     }

@@ -22,5 +22,7 @@ module de.leon.f1twitterbot {
     opens de.leon.f1twitterbot.jobs;
     exports de.leon.f1twitterbot.model;
     opens de.leon.f1twitterbot.model;
+    exports de.leon.f1twitterbot.trigger;
+    opens de.leon.f1twitterbot.trigger;
     opens de.leon.f1twitterbot.config to javafx.fxml;
 }
