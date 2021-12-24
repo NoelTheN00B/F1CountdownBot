@@ -61,15 +61,18 @@ public class MainController {
 
         Trigger testTrigger = BotTrigger.getTestTrigger("testTrigger1", "testTrigger", "testJob", "testJobs", 30);
         Trigger testTrigger2 = BotTrigger.getTestTrigger("testTrigger2", "testTrigger", "weeklyStatusPM", "pms", 60);
+        Trigger testTrigger3 = BotTrigger.getTestTrigger("testTrigger3", "testTrigger", "countdownTweet", "tweets", 60);
         CronTrigger countdownTweetsTrigger = BotTrigger.getDailyCounterTrigger("countdownTweetsTrigger", "tweetTrigger", "countdownTweet", "tweets");
         CronTrigger weeklyStatusTrigger = BotTrigger.getWeeklyStatusTrigger("weeklyStatusTrigger", "pmTrigger", "weeklyStatusPM", "pms", CronTriggerWeekdayCode.MON);
 
         assert twitterClient != null;
         twitterClient.postTweet(Texts.onlineMsg());
         statusLabel.setText("Bot running!");
+        System.out.println("Bot running!");
 
-        scheduler.scheduleJob(testJobDetail, testTrigger);
-        scheduler.scheduleJob(weeklyStatusPM, testTrigger2);
+        //scheduler.scheduleJob(testJobDetail, testTrigger);
+        scheduler.scheduleJob(countdownTweets, testTrigger3);
+        //scheduler.scheduleJob(weeklyStatusPM, testTrigger2);
         //scheduler.scheduleJob(countdownTweets, countdownTweetsTrigger);
         //scheduler.scheduleJob(weeklyStatusPM, weeklyStatusTrigger);
         scheduler.start();
