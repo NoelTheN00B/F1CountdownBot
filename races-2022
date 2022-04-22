@@ -1,0 +1,6 @@
+--raceNo//country//city//circuitName//grandPrixName//year//month//day//startHour//startMinute
+--use '--' for comments
+--this is test data
+1//Germany//Nürnburg//Nordschleife//Formula 1 Großerpreis der Eifel 2022//2022//6//12//14//00
+2//Spain//Barcelona//Circuit de Barcelona-Catalunya//Formula 1 Grand Prix de Barcelona-Catalunya 2022//2022//6//19//14//00
+3//Belgium//Stavelot//Circuit de Spa-Francorchamps//Formula 1 Grand Prix de Spa-Francorchamps 2022//2022//6//26//14//00
